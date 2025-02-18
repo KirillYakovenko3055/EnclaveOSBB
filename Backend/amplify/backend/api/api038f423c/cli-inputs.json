@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/api/auth": {
+      "name": "/api/auth",
+      "lambdaFunction": "backend0199267e",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

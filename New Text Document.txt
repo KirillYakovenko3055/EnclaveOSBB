@@ -1,0 +1,98 @@
+Для того чтобы интегрировать AWS Amplify в существующий проект на Node.js и развернуть его, необходимо выполнить несколько шагов. AWS Amplify предоставляет инструменты для деплоя и хостинга веб-приложений, включая поддержку серверных функций (включая API на Node.js).
+Шаг 1: Установка и настройка AWS Amplify CLI
+
+    Установите AWS Amplify CLI, если он еще не установлен:
+
+    bash
+
+npm install -g @aws-amplify/cli
+
+Инициализируйте Amplify в проекте:
+
+bash
+
+    amplify init
+
+    Во время инициализации вам нужно будет указать:
+        Имя проекта
+        Имя окружения (например, dev)
+        Конфигурацию AWS профиля
+
+Шаг 2: Добавление API
+
+Amplify поддерживает GraphQL и REST API. Для добавления существующего API на базе Express вам необходимо создать REST API через Amplify.
+
+    Запустите команду:
+
+    bash
+
+    amplify add api
+
+        Выберите REST в качестве типа API.
+        Дайте имя вашему API.
+        Настройте путь API (например, /api).
+        Укажите метод, который нужно поддерживать (GET, POST, и т.д.).
+        Настройте авторизацию (например, "No" или "IAM").
+
+    После добавления API, Amplify создаст инфраструктуру API Gateway и Lambda-функцию.
+
+Шаг 3: Настройка Express.js для работы с Lambda
+
+Чтобы ваш серверный код работал в AWS Lambda, вам нужно немного адаптировать его, так как Lambda обрабатывает запросы немного иначе, чем обычный сервер Node.js.
+
+    Установите необходимые зависимости:
+
+    bash
+
+npm install aws-serverless-express
+
+Создайте новый файл, например lambda.js, который будет адаптировать приложение Express для работы с Lambda:
+
+javascript
+
+    const awsServerlessExpress = require('aws-serverless-express');
+    const app = require('./app'); // Импортируйте ваше основное приложение Express
+    const server = awsServerlessExpress.createServer(app);
+
+    exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
+
+    Обновите файл amplify/backend/function/<your-function-name>/src/package.json, добавив зависимости, необходимые для вашего Express-приложения.
+
+Шаг 4: Деплой проекта в Amplify
+
+    Запустите команду деплоя:
+
+    bash
+
+    amplify push
+
+    Amplify создаст всю необходимую инфраструктуру в AWS, включая API Gateway, Lambda и другие ресурсы.
+
+    После успешного деплоя вы получите URL для доступа к вашему API через API Gateway.
+
+Шаг 5: Обновите CORS и базовый URL
+
+    Если ваш сервер теперь доступен через API Gateway, обновите настройки CORS:
+
+    javascript
+
+    app.use(cors({
+      origin: `${process.env.AWS_API_GATEWAY_URL}`,
+      credentials: true,
+    }));
+
+    Замените process.env.AWS_API_GATEWAY_URL на фактический URL вашего API Gateway.
+
+Шаг 6: Проверка и отладка
+
+После выполнения всех шагов:
+
+    Проверьте работу API через полученный URL.
+    Убедитесь, что маршруты и авторизация работают корректно.
+
+Дополнительные советы
+
+    Для работы с секретами используйте AWS Secrets Manager или Parameter Store.
+    Используйте Amplify Console для хостинга клиентского фронтенда (если он есть), если вам нужно полное решение для развертывания и хостинга.
+
+Эти шаги помогут добавить Amplify к вашему Node.js проекту и задеплоить его на AWS, сохраняя работоспособность всех API.

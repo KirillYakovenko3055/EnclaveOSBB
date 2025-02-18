@@ -1,0 +1,26 @@
+.smallB{
+    width: 30%;
+    font-size:8px;
+    padding: 1px;
+    margin-left: 7% ;
+    margin-right: 7% ;
+}
+.enterD{
+    height: 100%;
+    background-image: url('../../assets/images/cabinetBack.png');
+    background-size: cover;
+}
+.container{
+    display: flex;
+    width: 200px;
+    background-color: transparent;
+}
+.input {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    margin: 15px;
+    text-align: center;
+    border: 3px solid #C4C3E3;
+    border-radius: 5px;
+}
